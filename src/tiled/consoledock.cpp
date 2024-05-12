@@ -62,12 +62,15 @@ void ConsoleOutputWidget::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(event->globalPos());
 }
 
+ConsoleDock *ConsoleDock::instance;
 
 ConsoleDock::ConsoleDock(QWidget *parent)
     : QDockWidget(parent)
     , mPlainTextEdit(new ConsoleOutputWidget)
     , mLineEdit(new QLineEdit)
 {
+    instance = this;
+
     setObjectName(QLatin1String("ConsoleDock"));
 
     QWidget *widget = new QWidget(this);
@@ -123,6 +126,12 @@ ConsoleDock::ConsoleDock(QWidget *parent)
 
 ConsoleDock::~ConsoleDock()
 {
+    instance = nullptr;
+}
+
+void ConsoleDock::clear()
+{
+    mPlainTextEdit->clear();
 }
 
 void ConsoleDock::appendInfo(const QString &str)

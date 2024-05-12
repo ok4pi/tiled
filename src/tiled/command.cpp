@@ -30,6 +30,7 @@
 #include "world.h"
 #include "worlddocument.h"  // used to know that WorldDocument is a Document
 #include "worldmanager.h"
+#include "consoledock.h"
 
 #include <QAction>
 #include <QDir>
@@ -291,7 +292,8 @@ CommandProcess::CommandProcess(const Command &command, bool inTerminal, bool sho
             this, &QObject::deleteLater);
 
     if (showOutput) {
-        Tiled::INFO(tr("Executing: %1").arg(mFinalCommand));
+        if (ConsoleDock::instance)
+            ConsoleDock::instance->clear();
 
         connect(this, &QProcess::readyReadStandardError, this, &CommandProcess::consoleError);
         connect(this, &QProcess::readyReadStandardOutput, this, &CommandProcess::consoleOutput);

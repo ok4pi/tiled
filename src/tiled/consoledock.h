@@ -34,8 +34,12 @@ class ConsoleDock : public QDockWidget
     Q_OBJECT
 
 public:
+    static ConsoleDock *instance;
+
     explicit ConsoleDock(QWidget *parent = nullptr);
     ~ConsoleDock() override;
+
+    void clear();
 
 protected:
     void changeEvent(QEvent *e) override;

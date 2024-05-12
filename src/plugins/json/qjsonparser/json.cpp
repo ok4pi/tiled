@@ -155,33 +155,34 @@ void JsonWriter::stringify(const QVariant &variant, int depth)
 {
     if (variant.type() == QVariant::List || variant.type() == QVariant::StringList) {
         const QString indent = m_autoFormattingIndent.repeated(depth);
-        m_result += QLatin1Char('[');
+        m_result += QLatin1String("[\n");
+        m_result += indent;
+        m_result += m_autoFormattingIndent;
         QVariantList list = variant.toList();
         for (int i = 0; i < list.count(); i++) {
+            const QVariant &value = list[i];
             if (i != 0) {
                 m_result += QLatin1Char(',');
                 if (m_autoFormatting) {
-                    if (m_autoFormattingWrapArrayCount && i % m_autoFormattingWrapArrayCount == 0) {
+                    const QVariant::Type type = value.type();
+                    if (type == QVariant::Map || type == QVariant::List || type == QVariant::StringList || (m_autoFormattingWrapArrayCount && i % m_autoFormattingWrapArrayCount == 0)) {
                         m_result += QLatin1Char('\n');
                         m_result += indent;
-                    } else {
-                        // m_result += QLatin1Char(' ');
+                        m_result += m_autoFormattingIndent;
                     }
                 }
             }
-            stringify(list[i], depth+1);
+            stringify(value, depth+1);
         }
-        m_result += QLatin1Char('\n');
-        m_result += indent;
+        if (m_autoFormatting) {
+            m_result += QLatin1Char('\n');
+            m_result += indent;
+        }
         m_result += QLatin1Char(']');
     } else if (variant.type() == QVariant::Map) {
         const QString indent = m_autoFormattingIndent.repeated(depth);
         QVariantMap map = variant.toMap();
         if (m_autoFormatting) {
-            if (depth != 0) {
-                m_result += QLatin1Char('\n');
-                m_result += indent;
-            }
             m_result += QLatin1String("{\n");
         } else {
             m_result += QLatin1Char('{');

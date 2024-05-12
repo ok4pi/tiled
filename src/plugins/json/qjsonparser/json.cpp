@@ -45,7 +45,7 @@
   Creates a JsonWriter.
  */
 JsonWriter::JsonWriter()
-    : m_autoFormattingIndent(4, QLatin1Char(' '))
+    : m_autoFormattingIndent("\t")
 {
 }
 
@@ -59,10 +59,10 @@ JsonWriter::~JsonWriter()
 /*!
   Enables auto formatting if \a enable is \c true, otherwise
   disables it.
- 
+
   When auto formatting is enabled, the writer automatically inserts
   spaces and new lines to make the output more human readable.
- 
+
   The default value is \c false.
  */
 void JsonWriter::setAutoFormatting(bool enable)
@@ -165,19 +165,23 @@ void JsonWriter::stringify(const QVariant &variant, int depth)
                         m_result += QLatin1Char('\n');
                         m_result += indent;
                     } else {
-                        m_result += QLatin1Char(' ');
+                        // m_result += QLatin1Char(' ');
                     }
                 }
             }
             stringify(list[i], depth+1);
         }
+        m_result += QLatin1Char('\n');
+        m_result += indent;
         m_result += QLatin1Char(']');
     } else if (variant.type() == QVariant::Map) {
         const QString indent = m_autoFormattingIndent.repeated(depth);
         QVariantMap map = variant.toMap();
-        if (m_autoFormatting && depth != 0) {
-            m_result += QLatin1Char('\n');
-            m_result += indent;
+        if (m_autoFormatting) {
+            if (depth != 0) {
+                m_result += QLatin1Char('\n');
+                m_result += indent;
+            }
             m_result += QLatin1String("{\n");
         } else {
             m_result += QLatin1Char('{');
@@ -189,8 +193,16 @@ void JsonWriter::stringify(const QVariant &variant, int depth)
                     m_result += QLatin1Char('\n');
             }
             if (m_autoFormatting)
-                m_result += indent + QLatin1Char(' ');
-            m_result += QLatin1Char('\"') + escape(it.key()) + QLatin1String("\":");
+            {
+                m_result += indent;
+                m_result += m_autoFormattingIndent;
+            }
+            m_result += QLatin1Char('\"');
+            m_result += escape(it.key());
+            if (m_autoFormatting)
+                m_result += QLatin1String("\": ");
+            else
+                m_result += QLatin1String("\":");
             stringify(it.value(), depth+1);
         }
         if (m_autoFormatting) {
@@ -264,7 +276,7 @@ void JsonWriter::stringify(const QVariant &variant, int depth)
   \o QVariant::Invalid
   \o JSON null
   \row
-  \o QVariant::ULongLong, QVariant::LongLong, QVariant::Int, QVariant::UInt, 
+  \o QVariant::ULongLong, QVariant::LongLong, QVariant::Int, QVariant::UInt,
   \o JSON number
   \row
   \o QVariant::Char
@@ -282,6 +294,7 @@ bool JsonWriter::stringify(const QVariant &var)
     m_errorString.clear();
     m_result.clear();
     stringify(var, 0 /* depth */);
+    m_result += QLatin1Char('\n');
     return m_errorString.isEmpty();
 }
 

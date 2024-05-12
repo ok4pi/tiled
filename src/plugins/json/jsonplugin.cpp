@@ -93,7 +93,7 @@ bool JsonMapFormat::write(const Tiled::Map *map,
 {
     Tiled::SaveFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         mError = QCoreApplication::translate("File Errors", "Could not open file for writing.");
         return false;
     }
@@ -267,7 +267,7 @@ bool JsonTilesetFormat::write(const Tiled::Tileset &tileset,
 {
     Tiled::SaveFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         mError = QCoreApplication::translate("File Errors", "Could not open file for writing.");
         return false;
     }

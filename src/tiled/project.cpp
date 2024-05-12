@@ -92,10 +92,10 @@ bool Project::save(const QString &fileName)
     const QJsonDocument document(project);
 
     SaveFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly))
         return false;
 
-    file.device()->write(document.toJson());
+    file.device()->write(document.toJson().replace("    ", "\t"));
     if (!file.commit())
         return false;
 

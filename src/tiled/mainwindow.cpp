@@ -1165,6 +1165,9 @@ bool MainWindow::saveFile()
 
     document = saveAsDocument(document);
 
+    if (!document->isModified())
+        return false;
+
     const QString currentFileName = document->fileName();
 
     if (currentFileName.isEmpty() || !document->writerFormat())

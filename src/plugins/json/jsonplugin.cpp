@@ -369,7 +369,7 @@ bool JsonObjectTemplateFormat::write(const Tiled::ObjectTemplate *objectTemplate
 {
     Tiled::SaveFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         mError = QCoreApplication::translate("File Errors", "Could not open file for writing.");
         return false;
     }
